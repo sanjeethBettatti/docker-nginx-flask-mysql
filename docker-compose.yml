@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+ reverse-proxy:
+    image: nginx:1.17.10
+    container_name: reverse_proxy_demo
+    depends_on:
+        - web1
+        - web2
+    volumes:
+      - ./reverse_proxy/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+
+ web1:
+  container_name: web1
+  build: ./webapp1
+  ports:
+  - "5000:5000"
+  volumes:
+  - ./webapp1/:/app 
+ 
+ web2:
+  container_name: web2
+  build: ./webapp2
+  ports:
+  - "5001:5000"
+  volumes:
+  - ./webapp2/:/app 
+
+ mysqldb:
+  image: mysql
+  ports:
+  - "3306:3306"
+  environment:
+  - MYSQL_ROOT_PASSWORD=p@ssw0rd1
+  volumes:
+  - mysql:/var/lib/mysql
+  - mysql_config:/etc/mysql
+
+volumes:
+  mysql:
+  mysql_config:
